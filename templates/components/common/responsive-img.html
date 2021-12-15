@@ -36,7 +36,7 @@ There are a few important arguments to know about when using this component:
 
 --}}
 <img {{#if image}}{{!-- Get the default image for legacy browsers that do not support srcset
---}}src="{{getImageSrcset image 1x=(default fallback_size '160w')}}" alt="{{image.alt}}" title="{{image.alt}}" {{!--
+--}}src="{{getImageSrcset image 1x=(default fallback_size '160w')}}" alt="{{image.alt}}" title="{{image.alt}}" data-src="{{getImage image}}" data-hoverimage="{{#replace '{:size}' images.1.data}}original{{/replace}}" {{!--
   Allow lazysizes to generate the 'sizes' attribute automatically --}}data-sizes="auto"
   {{#unless lazyload '==' 'disabled'}}
     {{#if lazyload '==' 'lazyload+lqip'}}

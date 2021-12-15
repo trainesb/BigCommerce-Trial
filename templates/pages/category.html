@@ -48,6 +48,18 @@ category:
         {{/if}}
     {{/if}}
 
+    {{#if customer}}
+    <ul class="user-info">
+      <li>Name: {{customer.name}}</li>
+      <li>Email: {{customer.email}}</li>
+      <li>Address: {{customer.shipping_address.address1}}</li>
+      <li>City: {{customer.shipping_address.city}}</li>
+      <li>Country: {{customer.shipping_address.country}}</li>
+      <li>State: {{customer.shipping_address.state}}</li>
+      <li>Zip: {{customer.shipping_address.zip}}</li>
+    </ul>
+    {{/if}}
+
     <div class="page-content" id="product-listing-container">
         {{> components/category/product-listing}}
         {{{region name="category_below_content"}}}

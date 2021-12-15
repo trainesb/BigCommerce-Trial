@@ -27,6 +27,67 @@ export default class Category extends CatalogPage {
         $('a.navList-action').on('click', () => this.setLiveRegionAttributes($('span.price-filter-message'), 'status', 'assertive'));
     }
 
+    checkCart() {
+      fetch('/api/storefront/carts')
+        .then(response => response.json())
+        .then(data => {
+          if((data[0] !== undefined) && (data[0].lineItems.physicalItems.length > 0)) {
+            $('button#remove-all-cart').attr('data-cart-id', data[0].id);
+            $('button#remove-all-cart').css('display', 'inline-block');
+          }
+        })
+    }
+
+    addAllToCart() {
+      $("button#add-all-cart").on('click', () => {
+        $.map($('li.product > article.card'), function(n, i){
+          return $.get("/cart.php?action=add&product_id=" + n.dataset.productId)
+          .done(function(data, status, xhr) {
+            console.log('Item complete with status ' + status);
+            alert('Product ' + n.dataset.name + ' has been added to your cart!');
+
+            fetch('/api/storefront/carts')
+              .then(response => response.json())
+              .then(data => {
+                if((data[0] !== undefined) && (data[0].lineItems.physicalItems.length > 0)) {
+                  $('button#remove-all-cart').attr('data-cart-id', data[0].id);
+                  $('button#remove-all-cart').css('display', 'inline-block');
+                }
+              })
+            })
+          })
+        });
+    }
+
+    removeAllFromCart() {
+      $("button#remove-all-cart").on('click', () => {
+        let cartId = $('button#remove-all-cart').attr('data-cart-id');
+        fetch('/api/storefront/carts/' + cartId, {method: 'DELETE'})
+        .then(response => {
+          console.log('Cart Deleted');
+          $('button#remove-all-cart').attr('data-cart-id', '');
+          $('button#remove-all-cart').css('display', 'none');
+          alert('All items have been removed from your cart!');
+        })
+      })
+    }
+
+    productHover() {
+      $('figure.card-figure').hover(function(){
+        let img = $(this).find('.card-image');
+        let newImg = img.attr('data-hoverimage');
+        let curImg = img.attr('src');
+
+        if (newImg && newImg != '') { img.attr('src', newImg); }
+      }, function(){
+        let img = $(this).find('.card-image');
+        let newImg = img.attr('data-src');
+        let curImg = img.attr('src');
+
+        if (newImg && newImg != '') { img.attr('src', newImg); }
+      });
+    }
+
     onReady() {
         this.arrangeFocusOnSortBy();
 
@@ -46,6 +107,10 @@ export default class Category extends CatalogPage {
         $('a.reset-btn').on('click', () => this.setLiveRegionsAttributes($('span.reset-message'), 'status', 'polite'));
 
         this.ariaNotifyNoProducts();
+        this.productHover();
+        this.addAllToCart();
+        this.checkCart();
+        this.removeAllFromCart();
     }
 
     ariaNotifyNoProducts() {
